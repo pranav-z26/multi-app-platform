@@ -1,0 +1,12 @@
+{
+  "name": "multi-app-platform",
+  "version": "1.0.0",
+  "description": "Y-axis multi-app-platform assessment",
+  "license": "ISC",
+  "author": "Pranav Zagade",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
