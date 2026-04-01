@@ -21,7 +21,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18.x'
+        node-version: '20.x'
 
     - name: Install Dependencies
       working-directory: ./server/${{ matrix.service }}
@@ -41,7 +41,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18.x'
+        node-version: '20.x'
 
     - name: Install Dependencies
       working-directory: ./client/${{ matrix.app }}
