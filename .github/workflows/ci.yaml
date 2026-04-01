@@ -1,13 +1,13 @@
-name: Platform CI/CD
+name: Y-axis Platform CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main"]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main"]
 
 jobs:
-  # JOB 1 - Test all backend services
+  # JOB 1: Test Backend Services
   test-backends:
     runs-on: ubuntu-latest
     strategy:
@@ -22,12 +22,10 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: './${{ matrix.service }}/package-lock.json'
 
     - name: Install Dependencies
       working-directory: ./${{ matrix.service }}
-      run: npm ci
+      run: npm install
 
   # JOB 2 - Build frontend apps
   build-frontends:
@@ -44,18 +42,16 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: './${{ matrix.app }}/package-lock.json'
 
     - name: Install Dependencies
       working-directory: ./${{ matrix.app }}
-      run: npm ci
+      run: npm install
 
     - name: Build Vite App
       working-directory: ./${{ matrix.app }}
       run: npm run build
 
-  # JOB 3 - Fo validating docker configuration
+  # JOB 3 - Fo validating focker configuration
   docker-validation:
     needs: [test-backends, build-frontends]
     runs-on: ubuntu-latest
