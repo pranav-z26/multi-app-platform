@@ -1,0 +1,68 @@
+name: Platform CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # JOB 1 - Test all backend services
+  test-backends:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth-service, dashboard-service, store-service]
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: './${{ matrix.service }}/package-lock.json'
+
+    - name: Install Dependencies
+      working-directory: ./${{ matrix.service }}
+      run: npm ci
+
+  # JOB 2 - Build frontend apps
+  build-frontends:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [main-app, dashboard-app, store-app]
+        
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: './${{ matrix.app }}/package-lock.json'
+
+    - name: Install Dependencies
+      working-directory: ./${{ matrix.app }}
+      run: npm ci
+
+    - name: Build Vite App
+      working-directory: ./${{ matrix.app }}
+      run: npm run build
+
+  # JOB 3 - Fo validating docker configuration
+  docker-validation:
+    needs: [test-backends, build-frontends]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Test Docker Compose Build
+      run: docker-compose build
