@@ -15,13 +15,16 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Mock Database of 6 Products
+// store-service/index.js
+
+// Mock Database of 6 Products
 const products = [
-  { id: 1, name: 'Wireless Headphones', price: 199, description: 'Noise-cancelling over-ear headphones.' },
-  { id: 2, name: 'Mechanical Keyboard', price: 129, description: 'Tactile switches with RGB lighting.' },
-  { id: 3, name: 'Ergonomic Mouse', price: 79, description: 'Vertical mouse for wrist health.' },
-  { id: 4, name: '27" 4K Monitor', price: 349, description: 'Crisp IPS panel for productivity.' },
-  { id: 5, name: 'USB-C Docking Station', price: 89, description: 'Expand your laptop connectivity.' },
-  { id: 6, name: 'Desk Mat', price: 29, description: 'Premium leather desk protector.' }
+  { id: 1, name: 'Wireless Headphones', price: 15999, description: 'Noise-cancelling over-ear headphones.' },
+  { id: 2, name: 'Mechanical Keyboard', price: 9499, description: 'Tactile switches with RGB lighting.' },
+  { id: 3, name: 'Ergonomic Mouse', price: 5499, description: 'Vertical mouse for wrist health.' },
+  { id: 4, name: '27" 4K Monitor', price: 28999, description: 'Crisp IPS panel for productivity.' },
+  { id: 5, name: 'USB-C Docking Station', price: 6999, description: 'Expand your laptop connectivity.' },
+  { id: 6, name: 'Desk Mat', price: 1499, description: 'Premium leather desk protector.' }
 ];
 
 app.get('/api/store/products', userAuth, (req, res) => {

@@ -64,4 +64,24 @@ const logout = (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
-module.exports = { register, login, logout };
+const getMe = async (req, res) => {
+  // 1. Check if the browser sent the cookie
+  const token = req.cookies.auth_token;
+  if (!token) {
+    return res.status(401).json({ message: 'No active session' });
+  }
+
+  try {
+    // 2. Verify the token using your secret
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // 3. Send back the user info extracted from the token payload
+    res.status(200).json({ 
+      user: { id: verified.userId, name: verified.name } 
+    });
+  } catch (err) {
+    res.status(401).json({ message: 'Session expired' });
+  }
+};
+
+module.exports = { register, login, logout, getMe };

@@ -1,38 +1,82 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from './api/axios';
+import Header from './components/Header';
+import PortalCards from './components/PortalCards';
+import LoginForm from './components/LoginForm';
 
 function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        // This will automatically send the auth_token cookie if it exists
+        const response = await api.get('/auth/me');
+        setUser(response.data.user);
+      } catch (err) {
+        // If it fails, it just means they aren't logged in. Do nothing.
+        setUser(null);
+      } finally {
+        // Stop the loading spinner regardless of success or failure
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await api.post('/auth/login', { email, password });
       setUser(response.data.user);
       setError('');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // If logged in, show the portal links
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+      setUser(null);
+    } catch (err) {
+      console.error('Logout failed', err);
+    }
+  };
+
+  // NEW: Show a blank screen or spinner while checking the background session
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p className="text-gray-500 font-semibold text-lg">Loading platform...</p>
+      </div>
+    );
+  }
+
+  // If logged in, show the portal dashboard
   if (user) {
     return (
-      <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-        <h1>Welcome, {user.name}!</h1>
-        <p>You are officially authenticated across the platform.</p>
-        
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-          {/* Notice these are standard <a> tags linking to the other subdomains */}
-          <a href="http://dashboard.myplatform.local:4000" style={linkStyle}>
-            Go to Dashboard
-          </a>
-          <a href="http://store.myplatform.local:5000" style={linkStyle}>
-            Go to Store
-          </a>
+      <div className="min-h-screen bg-gray-100">
+        <Header user={user} onLogout={handleLogout} />
+
+        {/* Main Content */}
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user.name}</h2>
+            <p className="text-gray-600">You are authenticated across all platform services</p>
+          </div>
+
+          {/* Portal Cards Grid */}
+          <PortalCards />
         </div>
       </div>
     );
@@ -40,37 +84,18 @@ function App() {
 
   // If not logged in, show the form
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '400px' }}>
-      <h1>Platform Login</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <input 
-          type="email" 
-          placeholder="Email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          required 
-        />
-        <input 
-          type="password" 
-          placeholder="Password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          required 
-        />
-        <button type="submit">Log In</button>
-      </form>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <LoginForm
+        email={email}
+        password={password}
+        error={error}
+        loading={loading}
+        onEmailChange={setEmail}
+        onPasswordChange={setPassword}
+        onSubmit={handleLogin}
+      />
     </div>
   );
 }
-
-const linkStyle = {
-  padding: '10px 20px',
-  backgroundColor: '#007bff',
-  color: 'white',
-  textDecoration: 'none',
-  borderRadius: '5px'
-};
 
 export default App;

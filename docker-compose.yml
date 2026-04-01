@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Backend Services
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./auth-service/.env
+    # To prevent the container from crashing if mongo takes some time to connect
+    restart: unless-stopped 
+
+  dashboard-service:
+    build: ./dashboard-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./dashboard-service/.env
+    restart: unless-stopped
+
+  store-service:
+    build: ./store-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./store-service/.env
+    restart: unless-stopped
+
+  # Frontend Apps
+  main-app:
+    build: ./main-app
+    ports:
+      - "3000:3000"
+    # For mapping the container to our custom local domain
+    networks:
+      default:
+        aliases:
+          - app.myplatform.local
+    stdin_open: true
+
+  dashboard-app:
+    build: ./dashboard-app
+    ports:
+      - "4000:4000"
+    networks:
+      default:
+        aliases:
+          - dashboard.myplatform.local
+    stdin_open: true
+
+  store-app:
+    build: ./store-app
+    ports:
+      - "5000:5000"
+    networks:
+      default:
+        aliases:
+          - store.myplatform.local
+    stdin_open: true
