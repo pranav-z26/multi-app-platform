@@ -6,7 +6,6 @@ const userAuth = require('./middleware/authMiddleware');
 
 const app = express();
 
-// Allow the Dashboard React App to talk to this service and send cookies
 app.use(cors({
   origin: 'http://dashboard.myplatform.local:4000', 
   credentials: true 
@@ -15,7 +14,6 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Protected Route
 app.get('/api/dashboard/stats', userAuth, (req, res) => {
   res.status(200).json({
     message: `Welcome to the dashboard, ${req.user.name}!`,

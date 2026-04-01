@@ -1,24 +1,20 @@
-// store-app/src/App.jsx
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Catalog from './components/Catalog';
 import ProductDetail from './components/ProductDetail';
 import Cart from './components/Cart';
 
-// --- MAIN APP WITH ROUTER ---
 export default function App() {
   const [cart, setCart] = useState([]);
   
   const addToCart = (product) => {
     setCart([...cart, product]);
-    // A more subtle notification could be added here, but alert works for the assessment
     alert(`${product.name} added to cart!`);
   };
 
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 font-sans">
-        {/* Platform Standard Header */}
         <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
@@ -46,7 +42,6 @@ export default function App() {
           </div>
         </nav>
 
-        {/* Main Content Area */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Routes>
             <Route path="/" element={<Catalog />} />

@@ -15,14 +15,11 @@ function App() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // This will automatically send the auth_token cookie if it exists
         const response = await api.get('/auth/me');
         setUser(response.data.user);
       } catch (err) {
-        // If it fails, it just means they aren't logged in. Do nothing.
         setUser(null);
       } finally {
-        // Stop the loading spinner regardless of success or failure
         setIsCheckingAuth(false);
       }
     };
@@ -53,7 +50,6 @@ function App() {
     }
   };
 
-  // NEW: Show a blank screen or spinner while checking the background session
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -62,7 +58,6 @@ function App() {
     );
   }
 
-  // If logged in, show the portal dashboard
   if (user) {
     return (
       <div className="min-h-screen bg-gray-100">
@@ -82,7 +77,6 @@ function App() {
     );
   }
 
-  // If not logged in, show the form
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <LoginForm

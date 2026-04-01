@@ -1,4 +1,3 @@
-// auth-service/controllers/authController.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
@@ -13,7 +12,7 @@ const register = async (req, res) => {
     }
 
     const user = new User({ name, email, password });
-    await user.save(); // Password hashing is handled by the model hook
+    await user.save();
 
     res.status(201).json({ message: `User ${user.name} registered successfully!!` });
   } catch (error) {
@@ -37,10 +36,9 @@ const login = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    // Set Cross-Subdomain Cookie
     res.cookie('auth_token', token, {
       httpOnly: true,
-      secure: false, // fine for local HTTP
+      secure: false,
       domain: '.myplatform.local', 
       sameSite: 'lax',
       maxAge: 3600000 
@@ -56,7 +54,6 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  // To clear the cookie, the domain must match exactly
   res.clearCookie('auth_token', {
     domain: '.myplatform.local',
     path: '/'
@@ -65,17 +62,13 @@ const logout = (req, res) => {
 };
 
 const getMe = async (req, res) => {
-  // 1. Check if the browser sent the cookie
   const token = req.cookies.auth_token;
   if (!token) {
     return res.status(401).json({ message: 'No active session' });
   }
 
   try {
-    // 2. Verify the token using your secret
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // 3. Send back the user info extracted from the token payload
     res.status(200).json({ 
       user: { id: verified.userId, name: verified.name } 
     });

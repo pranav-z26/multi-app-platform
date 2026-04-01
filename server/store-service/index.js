@@ -14,10 +14,6 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Mock Database of 6 Products
-// store-service/index.js
-
-// Mock Database of 6 Products
 const products = [
   { id: 1, name: 'Wireless Headphones', price: 15999, description: 'Noise-cancelling over-ear headphones.' },
   { id: 2, name: 'Mechanical Keyboard', price: 9499, description: 'Tactile switches with RGB lighting.' },

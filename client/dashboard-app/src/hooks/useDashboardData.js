@@ -16,7 +16,6 @@ export function useDashboardData() {
       } catch (err) {
         setError(ERROR_MESSAGES.UNAUTHORIZED);
         setTimeout(() => {
-          // Redirects to Main App if token is missing/invalid
           window.location.href = MAIN_APP_URL;
         }, REDIRECT_DELAY);
       }
